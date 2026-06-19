@@ -19,16 +19,28 @@ def load_csv_to_dict(filepath: str, key_col: str) -> Dict[str, Dict[str, str]]:
             data[row[key_col]] = row
     return data
 
+def load_requirements(filepath: str) -> List[Dict[str, str]]:
+    data = []
+    with open(filepath, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            data.append(row)
+    return data
+
 def run_batch(claims_file: str, history_file: str, req_file: str, images_root: str, output_file: str):
-    from app.batch.ai_provider import get_ai_provider
+    from app.batch.ai_provider import get_ai_provider, AIProviderError
     from app.batch.validator import REQUIRED_COLUMNS, validate_output
     
     logger.info("Starting batch processing...")
     
     history_data = load_csv_to_dict(history_file, "user_id")
-    req_data = load_csv_to_dict(req_file, "claim_object")
+    req_data = load_requirements(req_file)
     
-    provider = get_ai_provider()
+    try:
+        provider = get_ai_provider()
+    except Exception as e:
+        logger.error(str(e))
+        sys.exit(1)
     
     temp_fd, temp_path = tempfile.mkstemp(suffix=".csv", text=True)
     
@@ -52,15 +64,25 @@ def run_batch(claims_file: str, history_file: str, req_file: str, images_root: s
                                 full_path = os.path.join(images_root, p.strip())
                                 images.append(full_path)
                     
-                    # Lookups
+                    # User history
                     history_row = history_data.get(user_id, {})
-                    history_ctx = f"Account Age: {history_row.get('account_age_days', 'unknown')}, " \\
-                                  f"Past Claims: {history_row.get('past_claims_count', 'unknown')}, " \\
-                                  f"Flags: {history_row.get('account_flags', 'none')}"
+                    history_ctx = (
+                        f"past_claim_count: {history_row.get('past_claim_count', 'unknown')}, "
+                        f"accept_claim: {history_row.get('accept_claim', 'unknown')}, "
+                        f"manual_review_claim: {history_row.get('manual_review_claim', 'unknown')}, "
+                        f"rejected_claim: {history_row.get('rejected_claim', 'unknown')}, "
+                        f"last_90_days_claim_count: {history_row.get('last_90_days_claim_count', 'unknown')}, "
+                        f"history_flags: {history_row.get('history_flags', 'none')}, "
+                        f"history_summary: {history_row.get('history_summary', 'none')}"
+                    )
                                   
-                    req_row = req_data.get(claim_obj, {})
-                    req_ctx = f"Required: {req_row.get('required_evidence', 'unknown')}, " \\
-                              f"Standard: {req_row.get('evidence_standard', 'unknown')}"
+                    # Evidence Requirements
+                    matching_reqs = []
+                    for req in req_data:
+                        if req.get('claim_object', '').lower() in ["all", claim_obj.lower()]:
+                            matching_reqs.append(req)
+                    
+                    req_ctx = "\\n".join([str(r) for r in matching_reqs])
                               
                     # Run AI
                     try:
@@ -72,20 +94,9 @@ def run_batch(claims_file: str, history_file: str, req_file: str, images_root: s
                             requirements_context=req_ctx
                         )
                     except Exception as e:
-                        logger.error(f"Error processing {user_id}: {e}")
-                        # Fallback row if AI completely fails
-                        ai_res = {
-                            "evidence_standard_met": "false",
-                            "evidence_standard_met_reason": str(e),
-                            "risk_flags": "none",
-                            "issue_type": "unknown",
-                            "object_part": "unknown",
-                            "claim_status": "manual_review",
-                            "claim_status_justification": "AI failure",
-                            "supporting_image_ids": "none",
-                            "valid_image": "false",
-                            "severity": "none"
-                        }
+                        logger.error(f"Error processing claim for user {user_id}: {e}")
+                        # Do not generate an artificial output row
+                        sys.exit(1)
                     
                     # Merge outputs
                     out_row = {
@@ -142,9 +153,13 @@ def main():
         run_batch(args.claims, args.history, args.requirements, args.images_root, args.output)
     elif args.command == "validate-output":
         from app.batch.validator import validate_output
-        is_valid, msg = validate_output(args.claims, args.output)
-        if is_valid:
-            print(msg)
+        try:
+            is_valid, msg = validate_output(args.claims, args.output)
+            if is_valid:
+                print(msg)
+        except Exception as e:
+            print(f"Validation Error: {e}")
+            sys.exit(1)
 
 if __name__ == "__main__":
     main()
