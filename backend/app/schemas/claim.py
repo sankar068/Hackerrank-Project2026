@@ -32,6 +32,7 @@ class ClaimUpdate(BaseModel):
 
 class ClaimBase(BaseModel):
     public_claim_id: str
+    title: str
     user_claim: str
     claim_object: str
     incident_date: Optional[str] = None
