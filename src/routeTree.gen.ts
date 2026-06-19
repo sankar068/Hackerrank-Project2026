@@ -9,38 +9,85 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppOverviewRouteImport } from './routes/_app.overview'
+import { Route as AppNewClaimRouteImport } from './routes/_app.new-claim'
+import { Route as AppResultClaimIdRouteImport } from './routes/_app.result.$claimId'
 
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppOverviewRoute = AppOverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNewClaimRoute = AppNewClaimRouteImport.update({
+  id: '/new-claim',
+  path: '/new-claim',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResultClaimIdRoute = AppResultClaimIdRouteImport.update({
+  id: '/result/$claimId',
+  path: '/result/$claimId',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/new-claim': typeof AppNewClaimRoute
+  '/overview': typeof AppOverviewRoute
+  '/result/$claimId': typeof AppResultClaimIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/new-claim': typeof AppNewClaimRoute
+  '/overview': typeof AppOverviewRoute
+  '/result/$claimId': typeof AppResultClaimIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_app/new-claim': typeof AppNewClaimRoute
+  '/_app/overview': typeof AppOverviewRoute
+  '/_app/result/$claimId': typeof AppResultClaimIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/new-claim' | '/overview' | '/result/$claimId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/new-claim' | '/overview' | '/result/$claimId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/_app/new-claim'
+    | '/_app/overview'
+    | '/_app/result/$claimId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +95,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/overview': {
+      id: '/_app/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof AppOverviewRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/new-claim': {
+      id: '/_app/new-claim'
+      path: '/new-claim'
+      fullPath: '/new-claim'
+      preLoaderRoute: typeof AppNewClaimRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/result/$claimId': {
+      id: '/_app/result/$claimId'
+      path: '/result/$claimId'
+      fullPath: '/result/$claimId'
+      preLoaderRoute: typeof AppResultClaimIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppNewClaimRoute: typeof AppNewClaimRoute
+  AppOverviewRoute: typeof AppOverviewRoute
+  AppResultClaimIdRoute: typeof AppResultClaimIdRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppNewClaimRoute: AppNewClaimRoute,
+  AppOverviewRoute: AppOverviewRoute,
+  AppResultClaimIdRoute: AppResultClaimIdRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
