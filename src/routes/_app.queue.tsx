@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -37,40 +37,40 @@ const TABS: Array<{ k: string; label: string; predicate: (c: StoredClaim) => boo
   {
     k: "all",
     label: "All flagged",
-    predicate: (c) => c.result.riskFlags.some((r) => r !== "none"),
+    predicate: (c) => c.result?.riskFlags?.some((r) => r !== "none") || false,
   },
   {
     k: "manual",
     label: "Manual review",
-    predicate: (c) => c.result.riskFlags.includes("manual_review_required"),
+    predicate: (c) => c.result?.riskFlags?.includes("manual_review_required") || false,
   },
   {
     k: "quality",
     label: "Image quality",
     predicate: (c) =>
-      c.result.riskFlags.some((r) =>
+      c.result?.riskFlags?.some((r) =>
         ["blurry_image", "cropped_or_obstructed", "low_light_or_glare", "wrong_angle"].includes(
           r as string,
         ),
-      ),
+      ) || false,
   },
   {
     k: "authenticity",
     label: "Authenticity",
     predicate: (c) =>
-      c.result.riskFlags.some((r) =>
+      c.result?.riskFlags?.some((r) =>
         ["possible_manipulation", "non_original_image"].includes(r as string),
-      ),
+      ) || false,
   },
   {
     k: "history",
     label: "User-history risks",
-    predicate: (c) => c.result.riskFlags.includes("user_history_risk"),
+    predicate: (c) => c.result?.riskFlags?.includes("user_history_risk") || false,
   },
   {
     k: "injection",
     label: "Prompt injection",
-    predicate: (c) => c.result.riskFlags.includes("text_instruction_present"),
+    predicate: (c) => c.result?.riskFlags?.includes("text_instruction_present") || false,
   },
 ];
 
@@ -107,7 +107,7 @@ function QueuePage() {
                 <Card>
                   <CardContent className="p-12 text-center text-sm text-muted-foreground">
                     <Inbox className="mx-auto mb-2 h-8 w-8 opacity-40" />
-                    No items in this queue.
+                    No claims currently require manual review.
                   </CardContent>
                 </Card>
               ) : (
@@ -127,6 +127,7 @@ function QueuePage() {
 
 function QueueCard({ claim }: { claim: StoredClaim }) {
   const r = claim.result;
+  if (!r) return null;
   return (
     <Card>
       <CardHeader className="flex flex-row items-start justify-between space-y-0">
@@ -141,7 +142,7 @@ function QueueCard({ claim }: { claim: StoredClaim }) {
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
         <div className="flex flex-wrap gap-1.5">
-          {r.riskFlags.map((f) => (
+          {r.riskFlags?.map((f) => (
             <RiskChip key={f} risk={f} />
           ))}
         </div>
@@ -208,7 +209,7 @@ function QueueCard({ claim }: { claim: StoredClaim }) {
 
 function OverrideDialog({ claim }: { claim: StoredClaim }) {
   const [open, setOpen] = useState(false);
-  const [decision, setDecision] = useState<ClaimStatus>(claim.result.claimStatus);
+  const [decision, setDecision] = useState<ClaimStatus>(claim.result?.claimStatus || "pending");
   const [reason, setReason] = useState("");
   const [name, setName] = useState("Review Administrator");
   const submit = () => {
@@ -220,7 +221,7 @@ function OverrideDialog({ claim }: { claim: StoredClaim }) {
       claimId: claim.claimId,
       actor: name,
       action: "Decision overridden",
-      previousValue: claim.result.claimStatus,
+      previousValue: claim.result?.claimStatus || "pending",
       newValue: decision,
       reason,
       status: "warning",

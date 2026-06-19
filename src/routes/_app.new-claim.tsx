@@ -34,7 +34,6 @@ import type {
   UserHistory,
 } from "@/types/claim";
 import { OBJECT_LABEL, OBJECT_DESCRIPTION } from "@/lib/labels";
-import { SCENARIOS } from "@/data/scenarios";
 import { reviewService } from "@/services/reviewService";
 import { upsertClaim, appendAudit } from "@/lib/storage";
 import { toast } from "sonner";
@@ -51,15 +50,6 @@ const STEPS = [
   "User History",
   "Review & Analyse",
 ];
-
-const SAMPLE_HISTORY: UserHistory = {
-  totalClaims: 8,
-  accepted: 3,
-  rejected: 3,
-  manualReview: 2,
-  recentClaims: 4,
-  riskNotes: "Multiple recent claims involving similar damage types.",
-};
 
 function newClaimId() {
   return `CLM-${Math.floor(10000 + Math.random() * 89999)}`;
@@ -90,88 +80,45 @@ function NewClaim() {
   const [stageText, setStageText] = useState("");
   const [progress, setProgress] = useState(0);
 
-  const loadScenario = (id: string) => {
-    const s = SCENARIOS.find((x) => x.id === id);
-    if (!s) return;
-    setInput({
-      ...s.input,
-      claimId: newClaimId(),
-      submittedAt: new Date().toISOString(),
-    });
-    toast.success(`Loaded scenario: ${s.title}`);
-    setStep(4);
-  };
-
   const onRun = useCallback(async () => {
-    setRunning(true);
-    setProgress(0);
-    setStageText("Initializing demo simulation");
+    const pendingClaim = { ...input, claimStatus: "pending" as const };
+    upsertClaim(pendingClaim);
     appendAudit({
       claimId: input.claimId,
       actor: "system",
-      action: "AI review started",
+      action: "Claim submitted",
       previousValue: "—",
-      newValue: "in_progress",
-      reason: "Reviewer triggered run",
+      newValue: "pending",
+      reason: "User requested review",
       status: "ok",
     });
+
+    setRunning(true);
+    setProgress(0);
+    setStageText("Connecting to production backend...");
     try {
-      const result = await reviewService.reviewClaim(input, (s, p) => {
-        setStageText(s);
-        setProgress(p);
-      });
-      upsertClaim({ ...input, result });
+      await reviewService.reviewClaim(input);
+    } catch (e) {
+      console.error(e);
+      toast.error(e instanceof Error ? e.message : "Review failed");
+      upsertClaim({ ...pendingClaim, claimStatus: "failed" as const });
       appendAudit({
         claimId: input.claimId,
         actor: "system",
-        action: "Decision generated",
-        previousValue: "in_progress",
-        newValue: result.claimStatus,
-        reason: result.claimStatusJustification,
-        status: "ok",
+        action: "Review failed",
+        previousValue: "pending",
+        newValue: "failed",
+        reason: e instanceof Error ? e.message : "Review failed",
+        status: "error",
       });
-      toast.success("Review complete");
-      navigate({ to: "/result/$claimId", params: { claimId: input.claimId } });
-    } catch (e) {
-      console.error(e);
-      toast.error("Review failed");
     } finally {
       setRunning(false);
+      navigate({ to: "/result/$claimId", params: { claimId: input.claimId } });
     }
   }, [input, navigate]);
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
-      <Card
-        className="shadow-soft border-ai/30"
-        style={{ borderColor: "color-mix(in oklab, var(--ai) 30%, transparent)" }}
-      >
-        <CardHeader className="flex flex-row items-start gap-3 space-y-0">
-          <Sparkles className="mt-0.5 h-5 w-5" style={{ color: "var(--ai)" }} />
-          <div className="flex-1">
-            <CardTitle className="text-base">Load Demo Scenario</CardTitle>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Jump straight into a representative case to see the end-to-end review.
-            </p>
-          </div>
-        </CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          {SCENARIOS.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => loadScenario(s.id)}
-              className="rounded-xl border border-border bg-card p-4 text-left transition hover:border-primary/50 hover:shadow-soft"
-            >
-              <div className="text-sm font-semibold">{s.title}</div>
-              <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{s.description}</p>
-              <div className="mt-3 text-[11px] font-medium" style={{ color: "var(--ai)" }}>
-                {s.expected} →
-              </div>
-            </button>
-          ))}
-        </CardContent>
-      </Card>
-
       <Stepper step={step} setStep={setStep} />
 
       {step === 0 && <StepDetails input={input} setInput={setInput} />}
@@ -463,64 +410,36 @@ function StepImages({ input, setInput }: { input: ClaimInput; setInput: (i: Clai
       Array.from(files).map(
         (f) =>
           new Promise<ClaimImage>((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () =>
-              resolve({
-                id: crypto.randomUUID(),
-                name: f.name,
-                size: f.size,
-                dataUrl: String(reader.result),
-              });
-            reader.readAsDataURL(f);
+            resolve({
+              id: crypto.randomUUID(),
+              name: f.name,
+              size: f.size,
+              dataUrl: URL.createObjectURL(f),
+            });
           }),
       ),
     ).then((imgs) => setInput({ ...input, images: [...input.images, ...imgs] }));
   };
 
-  const addSample = (label: string) => {
-    const sample: ClaimImage = {
-      id: crypto.randomUUID(),
-      name: `${label.toLowerCase().replace(/\s+/g, "-")}.svg`,
-      size: 64000,
-      dataUrl: `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 280'><rect width='400' height='280' fill='%23e2e8f0'/><text x='50%' y='50%' text-anchor='middle' fill='%23334155' font-family='Inter,sans-serif' font-size='18' font-weight='600'>${label}</text></svg>`)}`,
-    };
-    setInput({ ...input, images: [...input.images, sample] });
+  const remove = (id: string) => {
+    setInput({ ...input, images: input.images.filter((i) => i.id !== id) });
   };
 
-  const remove = (id: string) =>
-    setInput({ ...input, images: input.images.filter((i) => i.id !== id) });
-  const setPrimary = (id: string) =>
-    setInput({ ...input, images: input.images.map((i) => ({ ...i, primary: i.id === id })) });
+  const setPrimary = (id: string) => {
+    setInput({
+      ...input,
+      images: input.images.map((i) => ({ ...i, primary: i.id === id })),
+    });
+  };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Image Evidence</CardTitle>
+        <CardTitle className="text-base">Provide Evidence</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <label className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border p-8 text-center transition hover:border-primary/50">
-          <Upload className="h-7 w-7 text-muted-foreground" />
-          <div className="text-sm font-medium">Drag and drop, or click to upload</div>
-          <div className="text-xs text-muted-foreground">
-            JPG, JPEG, PNG, WEBP · multiple files supported
-          </div>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            className="hidden"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => onFiles(e.target.files)}
-          />
-        </label>
-
-        <div className="flex flex-wrap gap-2">
-          <span className="text-xs text-muted-foreground self-center mr-1">Demo samples:</span>
-          {["Car bumper damage", "Laptop screen crack", "Torn package"].map((s) => (
-            <Button key={s} size="sm" variant="outline" onClick={() => addSample(s)}>
-              <ImageIcon className="mr-1.5 h-3.5 w-3.5" />
-              {s}
-            </Button>
-          ))}
+        <div className="flex items-center gap-3">
+          <Input type="file" multiple accept="image/*" onChange={(e) => onFiles(e.target.files)} />
         </div>
 
         {input.images.length > 0 && (
@@ -581,22 +500,6 @@ function StepHistory({
   input: ClaimInput;
   setInput: (i: ClaimInput) => void;
 }) {
-  const useSample = (on: boolean) =>
-    setInput({
-      ...input,
-      history: on
-        ? SAMPLE_HISTORY
-        : {
-            totalClaims: 0,
-            accepted: 0,
-            rejected: 0,
-            manualReview: 0,
-            recentClaims: 0,
-            riskNotes: "",
-          },
-    });
-  const usingSample = JSON.stringify(input.history) === JSON.stringify(SAMPLE_HISTORY);
-
   const risk = useMemo(() => {
     const { rejected, recentClaims, manualReview } = input.history;
     if (rejected >= 3 || recentClaims >= 4) return "High";
@@ -633,9 +536,6 @@ function StepHistory({
       <Card className="lg:col-span-2">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base">User History</CardTitle>
-          <div className="flex items-center gap-2 text-sm">
-            <Switch checked={usingSample} onCheckedChange={useSample} /> Use sample history
-          </div>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2">
           {field("totalClaims", "Total previous claims")}
@@ -705,8 +605,8 @@ function StepReview({
             <Separator />
             <p className="mt-3 rounded-md bg-muted p-3 text-xs text-muted-foreground flex items-start gap-2">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              This result is generated by the demo simulation engine. Production image analysis is
-              not connected yet.
+              Production image analysis is not connected yet. Submitting will save the claim as
+              pending.
             </p>
           </div>
         </CardContent>

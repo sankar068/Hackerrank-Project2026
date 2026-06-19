@@ -1,8 +1,7 @@
 import type { StoredClaim } from "@/types/claim";
-import { DEMO_CLAIMS } from "@/data/demoClaims";
 
-const KEY = "evidencelens.claims.v1";
-const AUDIT_KEY = "evidencelens.audit.v1";
+const KEY = "evidencelens.claims.v2";
+const AUDIT_KEY = "evidencelens.audit.v2";
 
 export interface AuditEntry {
   id: string;
@@ -20,15 +19,28 @@ function isBrowser() {
   return typeof window !== "undefined";
 }
 
+function migrateStorage() {
+  if (!isBrowser()) return;
+  const migrated = window.localStorage.getItem("evidencelens.migrated.v2");
+  if (!migrated) {
+    window.localStorage.removeItem("evidencelens.claims.v1");
+    window.localStorage.removeItem("evidencelens.audit.v1");
+    window.localStorage.setItem("evidencelens.migrated.v2", "true");
+  }
+}
+
+// Run migration on load
+migrateStorage();
+
 export function loadClaims(): StoredClaim[] {
-  if (!isBrowser()) return DEMO_CLAIMS;
+  if (!isBrowser()) return [];
   try {
     const raw = window.localStorage.getItem(KEY);
-    if (!raw) return DEMO_CLAIMS;
-    const parsed = JSON.parse(raw) as StoredClaim[];
-    return Array.isArray(parsed) && parsed.length ? parsed : DEMO_CLAIMS;
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return DEMO_CLAIMS;
+    return [];
   }
 }
 
@@ -52,13 +64,14 @@ export function removeClaim(claimId: string) {
 }
 
 export function loadAudit(): AuditEntry[] {
-  if (!isBrowser()) return DEFAULT_AUDIT;
+  if (!isBrowser()) return [];
   try {
     const raw = window.localStorage.getItem(AUDIT_KEY);
-    if (!raw) return DEFAULT_AUDIT;
-    return JSON.parse(raw);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-    return DEFAULT_AUDIT;
+    return [];
   }
 }
 
@@ -74,61 +87,3 @@ export function appendAudit(entry: Omit<AuditEntry, "id" | "timestamp">) {
   window.localStorage.setItem(AUDIT_KEY, JSON.stringify(list.slice(0, 500)));
   window.dispatchEvent(new Event("evidencelens:audit"));
 }
-
-const DEFAULT_AUDIT: AuditEntry[] = [
-  {
-    id: "a1",
-    timestamp: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
-    claimId: "CLM-10421",
-    actor: "system",
-    action: "AI review started",
-    previousValue: "—",
-    newValue: "in_progress",
-    reason: "Reviewer triggered run",
-    status: "ok",
-  },
-  {
-    id: "a2",
-    timestamp: new Date(Date.now() - 1000 * 60 * 11).toISOString(),
-    claimId: "CLM-10421",
-    actor: "system",
-    action: "Decision generated",
-    previousValue: "in_progress",
-    newValue: "supported",
-    reason: "Evidence matches claim",
-    status: "ok",
-  },
-  {
-    id: "a3",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
-    claimId: "CLM-10387",
-    actor: "system",
-    action: "Risk flag added",
-    previousValue: "[]",
-    newValue: "text_instruction_present",
-    reason: "Embedded instruction in conversation",
-    status: "warning",
-  },
-  {
-    id: "a4",
-    timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
-    claimId: "CLM-10374",
-    actor: "review.admin",
-    action: "Human review requested",
-    previousValue: "supported",
-    newValue: "supported (manual review)",
-    reason: "User-history risk",
-    status: "warning",
-  },
-  {
-    id: "a5",
-    timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
-    claimId: "CLM-10399",
-    actor: "review.admin",
-    action: "CSV exported",
-    previousValue: "—",
-    newValue: "output.csv",
-    reason: "Export requested",
-    status: "ok",
-  },
-];

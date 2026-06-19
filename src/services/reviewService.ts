@@ -1,15 +1,5 @@
 import type { ClaimInput, ReviewResult } from "@/types/claim";
 
-/**
- * Review service interface.
- *
- * Production swap-in points:
- *  - FastAPI / Python pipeline endpoint
- *  - OpenAI Vision, Gemini multimodal, or Claude Vision
- *  - Local VLM service
- *
- * The UI layer must depend on this interface only.
- */
 export interface ReviewService {
   reviewClaim(
     input: ClaimInput,
@@ -17,7 +7,16 @@ export interface ReviewService {
   ): Promise<ReviewResult>;
 }
 
-import { MockReviewService } from "./mockReviewService";
+class ProductionReviewService implements ReviewService {
+  async reviewClaim(
+    input: ClaimInput,
+    onStage?: (stage: string, progress: number) => void,
+  ): Promise<ReviewResult> {
+    if (onStage) onStage("Connecting to AI review backend...", 50);
+    throw new Error(
+      "AI_REVIEW_SERVICE_NOT_CONFIGURED: Connect the production backend to analyse this claim.",
+    );
+  }
+}
 
-// TODO: Replace with ProductionReviewService once the FastAPI backend is wired.
-export const reviewService: ReviewService = new MockReviewService();
+export const reviewService: ReviewService = new ProductionReviewService();

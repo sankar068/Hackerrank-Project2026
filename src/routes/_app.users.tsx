@@ -55,9 +55,9 @@ function UsersPage() {
         claims: [],
       };
       u.total += 1;
-      if (c.result.claimStatus === "supported") u.accepted += 1;
-      else if (c.result.claimStatus === "contradicted") u.rejected += 1;
-      if (c.result.riskFlags.includes("manual_review_required")) u.manual += 1;
+      if (c.result?.claimStatus === "supported") u.accepted += 1;
+      else if (c.result?.claimStatus === "contradicted") u.rejected += 1;
+      if (c.result?.riskFlags?.includes("manual_review_required")) u.manual += 1;
       const days = (Date.now() - new Date(c.submittedAt).getTime()) / 86400000;
       if (days <= 30) u.recent += 1;
       if (new Date(c.submittedAt) > new Date(u.lastClaim)) u.lastClaim = c.submittedAt;
@@ -105,6 +105,13 @@ function UsersPage() {
               </tr>
             </thead>
             <tbody>
+              {users.length === 0 && (
+                <tr>
+                  <td colSpan={10} className="px-3 py-12 text-center text-sm text-muted-foreground">
+                    No claimant history is available.
+                  </td>
+                </tr>
+              )}
               {users.map((u) => (
                 <tr key={u.userId} className="border-t border-border hover:bg-muted/30">
                   <td className="px-3 py-2.5 font-mono text-xs">{u.userId}</td>
@@ -194,7 +201,7 @@ function UserDetail({ user }: { user: UserAgg }) {
                   {OBJECT_LABEL[c.claimObject]} · {format(new Date(c.submittedAt), "PPp")}
                 </div>
               </div>
-              <StatusBadge status={c.result.claimStatus} />
+              <StatusBadge status={c.result?.claimStatus || c.claimStatus || "pending"} />
             </div>
           ))}
         </div>

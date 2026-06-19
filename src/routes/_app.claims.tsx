@@ -145,155 +145,178 @@ function ClaimsPage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Claims ({filtered.length})</CardTitle>
-          <span className="text-xs text-muted-foreground">
-            Page {page} of {pages}
-          </span>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
-                <tr>
-                  <th className="px-3 py-2.5 text-left">Claim ID</th>
-                  <th className="px-3 py-2.5 text-left">User</th>
-                  <th className="px-3 py-2.5 text-left">Object</th>
-                  <th className="px-3 py-2.5 text-left">Summary</th>
-                  <th className="px-3 py-2.5 text-center">Imgs</th>
-                  <th className="px-3 py-2.5 text-left">Evidence</th>
-                  <th className="px-3 py-2.5 text-left">Decision</th>
-                  <th className="px-3 py-2.5 text-left">Severity</th>
-                  <th className="px-3 py-2.5 text-left">Risks</th>
-                  <th className="px-3 py-2.5 text-left">Reviewed</th>
-                  <th className="px-3 py-2.5"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {slice.length === 0 && (
+      {claims.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <h3 className="text-lg font-semibold">No claims have been submitted yet.</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Get started by creating a new claim.
+            </p>
+            <Button asChild className="mt-6">
+              <Link to="/new-claim">Create First Claim</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-base">Claims ({filtered.length})</CardTitle>
+            <span className="text-xs text-muted-foreground">
+              Page {page} of {pages}
+            </span>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>
-                    <td
-                      colSpan={11}
-                      className="px-3 py-12 text-center text-sm text-muted-foreground"
+                    <th className="px-3 py-2.5 text-left">Claim ID</th>
+                    <th className="px-3 py-2.5 text-left">User</th>
+                    <th className="px-3 py-2.5 text-left">Object</th>
+                    <th className="px-3 py-2.5 text-left">Summary</th>
+                    <th className="px-3 py-2.5 text-center">Imgs</th>
+                    <th className="px-3 py-2.5 text-left">Evidence</th>
+                    <th className="px-3 py-2.5 text-left">Decision</th>
+                    <th className="px-3 py-2.5 text-left">Severity</th>
+                    <th className="px-3 py-2.5 text-left">Risks</th>
+                    <th className="px-3 py-2.5 text-left">Reviewed</th>
+                    <th className="px-3 py-2.5"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {slice.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={11}
+                        className="px-3 py-12 text-center text-sm text-muted-foreground"
+                      >
+                        No claims match these filters.
+                      </td>
+                    </tr>
+                  )}
+                  {slice.map((c) => (
+                    <tr
+                      key={c.claimId}
+                      className="border-t border-border align-top hover:bg-muted/30"
                     >
-                      No claims match these filters.
-                    </td>
-                  </tr>
-                )}
-                {slice.map((c) => (
-                  <tr
-                    key={c.claimId}
-                    className="border-t border-border align-top hover:bg-muted/30"
-                  >
-                    <td className="px-3 py-2.5 font-mono text-xs">{c.claimId}</td>
-                    <td className="px-3 py-2.5">
-                      <div className="font-medium">{c.userName}</div>
-                      <div className="text-[11px] text-muted-foreground">{c.userId}</div>
-                    </td>
-                    <td className="px-3 py-2.5">{OBJECT_LABEL[c.claimObject]}</td>
-                    <td className="px-3 py-2.5 max-w-[220px] truncate">{c.claimTitle}</td>
-                    <td className="px-3 py-2.5 text-center">{c.images.length}</td>
-                    <td className="px-3 py-2.5">
-                      <Badge variant={c.result.evidenceStandardMet ? "default" : "secondary"}>
-                        {c.result.evidenceStandardMet ? "Met" : "Not met"}
-                      </Badge>
-                    </td>
-                    <td className="px-3 py-2.5">
-                      <StatusBadge status={c.result.claimStatus} />
-                    </td>
-                    <td className="px-3 py-2.5">
-                      <SeverityBadge severity={c.result.severity} />
-                    </td>
-                    <td className="px-3 py-2.5">
-                      <div className="flex max-w-[180px] flex-wrap gap-1">
-                        {c.result.riskFlags.slice(0, 2).map((r) => (
-                          <RiskChip key={r} risk={r} />
-                        ))}
-                        {c.result.riskFlags.length > 2 && (
-                          <span className="text-[11px] text-muted-foreground">
-                            +{c.result.riskFlags.length - 2}
-                          </span>
+                      <td className="px-3 py-2.5 font-mono text-xs">{c.claimId}</td>
+                      <td className="px-3 py-2.5">
+                        <div className="font-medium">{c.userName}</div>
+                        <div className="text-[11px] text-muted-foreground">{c.userId}</div>
+                      </td>
+                      <td className="px-3 py-2.5">{OBJECT_LABEL[c.claimObject]}</td>
+                      <td className="px-3 py-2.5 max-w-[220px] truncate">{c.claimTitle}</td>
+                      <td className="px-3 py-2.5 text-center">{c.images?.length || 0}</td>
+                      <td className="px-3 py-2.5">
+                        {c.result ? (
+                          <Badge variant={c.result.evidenceStandardMet ? "default" : "secondary"}>
+                            {c.result.evidenceStandardMet ? "Met" : "Not met"}
+                          </Badge>
+                        ) : (
+                          "—"
                         )}
-                      </div>
-                    </td>
-                    <td className="px-3 py-2.5 text-xs text-muted-foreground">
-                      {formatDistanceToNow(new Date(c.result.reviewedAt), { addSuffix: true })}
-                    </td>
-                    <td className="px-3 py-2.5 text-right">
-                      <div className="flex justify-end gap-1">
-                        <Button asChild size="icon" variant="ghost" aria-label="View">
-                          <Link to="/result/$claimId" params={{ claimId: c.claimId }}>
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          aria-label="Export"
-                          onClick={() => {
-                            exportResultCsv(c, c.result);
-                            toast.success("output.csv downloaded");
-                          }}
-                        >
-                          <Download className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          aria-label="Manual review"
-                          onClick={() => {
-                            appendAudit({
-                              claimId: c.claimId,
-                              actor: "review.admin",
-                              action: "Manual review requested",
-                              previousValue: c.result.claimStatus,
-                              newValue: "manual_review",
-                              reason: "Reviewer flagged",
-                              status: "warning",
-                            });
-                            toast.success("Flagged for manual review");
-                          }}
-                        >
-                          <AlertTriangle className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          aria-label="Delete"
-                          onClick={() => onDelete(c.claimId)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-        {pages > 1 && (
-          <div className="flex items-center justify-end gap-2 border-t border-border p-3">
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-            >
-              Previous
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={page === pages}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        )}
-      </Card>
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <StatusBadge status={c.result?.claimStatus || c.claimStatus || "pending"} />
+                      </td>
+                      <td className="px-3 py-2.5">
+                        {c.result?.severity ? <SeverityBadge severity={c.result.severity} /> : "—"}
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <div className="flex max-w-[180px] flex-wrap gap-1">
+                          {c.result?.riskFlags?.slice(0, 2).map((r) => (
+                            <RiskChip key={r} risk={r} />
+                          ))}
+                          {(c.result?.riskFlags?.length || 0) > 2 && (
+                            <span className="text-[11px] text-muted-foreground">
+                              +{c.result.riskFlags.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                        {c.result?.reviewedAt
+                          ? formatDistanceToNow(new Date(c.result.reviewedAt), { addSuffix: true })
+                          : "—"}
+                      </td>
+                      <td className="px-3 py-2.5 text-right">
+                        <div className="flex justify-end gap-1">
+                          <Button asChild size="icon" variant="ghost" aria-label="View">
+                            <Link to="/result/$claimId" params={{ claimId: c.claimId }}>
+                              <Eye className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            aria-label="Export"
+                            disabled={!c.result}
+                            onClick={() => {
+                              if (c.result) {
+                                exportResultCsv(c, c.result);
+                                toast.success("output.csv downloaded");
+                              }
+                            }}
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            aria-label="Manual review"
+                            onClick={() => {
+                              appendAudit({
+                                claimId: c.claimId,
+                                actor: "review.admin",
+                                action: "Manual review requested",
+                                previousValue: c.result.claimStatus,
+                                newValue: "manual_review",
+                                reason: "Reviewer flagged",
+                                status: "warning",
+                              });
+                              toast.success("Flagged for manual review");
+                            }}
+                          >
+                            <AlertTriangle className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            aria-label="Delete"
+                            onClick={() => onDelete(c.claimId)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+          {pages > 1 && (
+            <div className="flex items-center justify-end gap-2 border-t border-border p-3">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page === 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                Previous
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page === pages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </Card>
+      )}
     </div>
   );
 }

@@ -1,6 +1,15 @@
 export type ClaimObject = "car" | "laptop" | "package";
 
-export type ClaimStatus = "supported" | "contradicted" | "not_enough_information";
+export type ClaimStatus =
+  | "draft"
+  | "pending"
+  | "processing"
+  | "completed"
+  | "failed"
+  | "manual_review"
+  | "supported"
+  | "contradicted"
+  | "not_enough_information";
 
 export type Severity = "none" | "low" | "medium" | "high" | "unknown";
 
@@ -112,9 +121,10 @@ export interface ReviewResult {
   reasoning: { claimed: string; observed: string; decision: string };
   minimumEvidenceExpected: string;
   reviewedAt: string;
-  simulated: boolean;
+  simulated?: boolean;
 }
 
 export interface StoredClaim extends ClaimInput {
-  result: ReviewResult;
+  claimStatus?: ClaimStatus;
+  result?: ReviewResult;
 }

@@ -130,7 +130,7 @@ function AuditPage() {
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={8} className="px-3 py-12 text-center text-sm text-muted-foreground">
-                    No audit entries.
+                    No audit events recorded.
                   </td>
                 </tr>
               )}
