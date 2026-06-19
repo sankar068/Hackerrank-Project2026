@@ -11,8 +11,15 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppUsersRouteImport } from './routes/_app.users'
+import { Route as AppSettingsRouteImport } from './routes/_app.settings'
+import { Route as AppRulesRouteImport } from './routes/_app.rules'
+import { Route as AppQueueRouteImport } from './routes/_app.queue'
 import { Route as AppOverviewRouteImport } from './routes/_app.overview'
 import { Route as AppNewClaimRouteImport } from './routes/_app.new-claim'
+import { Route as AppEvaluationRouteImport } from './routes/_app.evaluation'
+import { Route as AppClaimsRouteImport } from './routes/_app.claims'
+import { Route as AppAuditRouteImport } from './routes/_app.audit'
 import { Route as AppResultClaimIdRouteImport } from './routes/_app.result.$claimId'
 
 const AppRoute = AppRouteImport.update({
@@ -24,6 +31,26 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppUsersRoute = AppUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRulesRoute = AppRulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQueueRoute = AppQueueRouteImport.update({
+  id: '/queue',
+  path: '/queue',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppOverviewRoute = AppOverviewRouteImport.update({
   id: '/overview',
   path: '/overview',
@@ -34,6 +61,21 @@ const AppNewClaimRoute = AppNewClaimRouteImport.update({
   path: '/new-claim',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEvaluationRoute = AppEvaluationRouteImport.update({
+  id: '/evaluation',
+  path: '/evaluation',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppClaimsRoute = AppClaimsRouteImport.update({
+  id: '/claims',
+  path: '/claims',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAuditRoute = AppAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppResultClaimIdRoute = AppResultClaimIdRouteImport.update({
   id: '/result/$claimId',
   path: '/result/$claimId',
@@ -42,35 +84,85 @@ const AppResultClaimIdRoute = AppResultClaimIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/audit': typeof AppAuditRoute
+  '/claims': typeof AppClaimsRoute
+  '/evaluation': typeof AppEvaluationRoute
   '/new-claim': typeof AppNewClaimRoute
   '/overview': typeof AppOverviewRoute
+  '/queue': typeof AppQueueRoute
+  '/rules': typeof AppRulesRoute
+  '/settings': typeof AppSettingsRoute
+  '/users': typeof AppUsersRoute
   '/result/$claimId': typeof AppResultClaimIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/audit': typeof AppAuditRoute
+  '/claims': typeof AppClaimsRoute
+  '/evaluation': typeof AppEvaluationRoute
   '/new-claim': typeof AppNewClaimRoute
   '/overview': typeof AppOverviewRoute
+  '/queue': typeof AppQueueRoute
+  '/rules': typeof AppRulesRoute
+  '/settings': typeof AppSettingsRoute
+  '/users': typeof AppUsersRoute
   '/result/$claimId': typeof AppResultClaimIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/_app/audit': typeof AppAuditRoute
+  '/_app/claims': typeof AppClaimsRoute
+  '/_app/evaluation': typeof AppEvaluationRoute
   '/_app/new-claim': typeof AppNewClaimRoute
   '/_app/overview': typeof AppOverviewRoute
+  '/_app/queue': typeof AppQueueRoute
+  '/_app/rules': typeof AppRulesRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/users': typeof AppUsersRoute
   '/_app/result/$claimId': typeof AppResultClaimIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/new-claim' | '/overview' | '/result/$claimId'
+  fullPaths:
+    | '/'
+    | '/audit'
+    | '/claims'
+    | '/evaluation'
+    | '/new-claim'
+    | '/overview'
+    | '/queue'
+    | '/rules'
+    | '/settings'
+    | '/users'
+    | '/result/$claimId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/new-claim' | '/overview' | '/result/$claimId'
+  to:
+    | '/'
+    | '/audit'
+    | '/claims'
+    | '/evaluation'
+    | '/new-claim'
+    | '/overview'
+    | '/queue'
+    | '/rules'
+    | '/settings'
+    | '/users'
+    | '/result/$claimId'
   id:
     | '__root__'
     | '/'
     | '/_app'
+    | '/_app/audit'
+    | '/_app/claims'
+    | '/_app/evaluation'
     | '/_app/new-claim'
     | '/_app/overview'
+    | '/_app/queue'
+    | '/_app/rules'
+    | '/_app/settings'
+    | '/_app/users'
     | '/_app/result/$claimId'
   fileRoutesById: FileRoutesById
 }
@@ -95,6 +187,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/users': {
+      id: '/_app/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AppUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/rules': {
+      id: '/_app/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof AppRulesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/queue': {
+      id: '/_app/queue'
+      path: '/queue'
+      fullPath: '/queue'
+      preLoaderRoute: typeof AppQueueRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/overview': {
       id: '/_app/overview'
       path: '/overview'
@@ -109,6 +229,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNewClaimRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/evaluation': {
+      id: '/_app/evaluation'
+      path: '/evaluation'
+      fullPath: '/evaluation'
+      preLoaderRoute: typeof AppEvaluationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/claims': {
+      id: '/_app/claims'
+      path: '/claims'
+      fullPath: '/claims'
+      preLoaderRoute: typeof AppClaimsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/audit': {
+      id: '/_app/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AppAuditRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/result/$claimId': {
       id: '/_app/result/$claimId'
       path: '/result/$claimId'
@@ -120,14 +261,28 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppAuditRoute: typeof AppAuditRoute
+  AppClaimsRoute: typeof AppClaimsRoute
+  AppEvaluationRoute: typeof AppEvaluationRoute
   AppNewClaimRoute: typeof AppNewClaimRoute
   AppOverviewRoute: typeof AppOverviewRoute
+  AppQueueRoute: typeof AppQueueRoute
+  AppRulesRoute: typeof AppRulesRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppUsersRoute: typeof AppUsersRoute
   AppResultClaimIdRoute: typeof AppResultClaimIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAuditRoute: AppAuditRoute,
+  AppClaimsRoute: AppClaimsRoute,
+  AppEvaluationRoute: AppEvaluationRoute,
   AppNewClaimRoute: AppNewClaimRoute,
   AppOverviewRoute: AppOverviewRoute,
+  AppQueueRoute: AppQueueRoute,
+  AppRulesRoute: AppRulesRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppUsersRoute: AppUsersRoute,
   AppResultClaimIdRoute: AppResultClaimIdRoute,
 }
 
