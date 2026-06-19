@@ -19,7 +19,10 @@ function detectInjection(text: string) {
 }
 
 export class MockReviewService implements ReviewService {
-  async reviewClaim(input: ClaimInput, onStage?: (stage: string, progress: number) => void): Promise<ReviewResult> {
+  async reviewClaim(
+    input: ClaimInput,
+    onStage?: (stage: string, progress: number) => void,
+  ): Promise<ReviewResult> {
     for (let i = 0; i < STAGES.length; i++) {
       await new Promise((r) => setTimeout(r, 380));
       onStage?.(STAGES[i], Math.round(((i + 1) / STAGES.length) * 100));
@@ -111,7 +114,9 @@ export class MockReviewService implements ReviewService {
       ],
       reasoning: {
         claimed: input.claimTitle || "Custom claim",
-        observed: hasImages ? "Images were inspected by the simulation engine." : "No images were submitted.",
+        observed: hasImages
+          ? "Images were inspected by the simulation engine."
+          : "No images were submitted.",
         decision: hasImages
           ? "Simulated supportive decision. A real VLM will produce the production decision."
           : "No images means the claim cannot be verified.",

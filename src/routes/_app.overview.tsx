@@ -7,9 +7,30 @@ import type { StoredClaim } from "@/types/claim";
 import { StatusBadge, SeverityBadge, RiskChip } from "@/components/status-badge";
 import { OBJECT_LABEL } from "@/lib/labels";
 import {
-  ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, CartesianGrid,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  LineChart,
+  Line,
+  CartesianGrid,
 } from "recharts";
-import { ArrowUpRight, ArrowDownRight, ArrowRight, AlertTriangle, ImageOff, ShieldX, Crosshair, ServerCog, CheckCircle2 } from "lucide-react";
+import {
+  ArrowUpRight,
+  ArrowDownRight,
+  ArrowRight,
+  AlertTriangle,
+  ImageOff,
+  ShieldX,
+  Crosshair,
+  ServerCog,
+  CheckCircle2,
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 export const Route = createFileRoute("/_app/overview")({
@@ -39,8 +60,13 @@ const BARS = [
 ];
 
 const WEEK = [
-  { d: "Mon", v: 18 }, { d: "Tue", v: 24 }, { d: "Wed", v: 31 }, { d: "Thu", v: 27 },
-  { d: "Fri", v: 35 }, { d: "Sat", v: 14 }, { d: "Sun", v: 9 },
+  { d: "Mon", v: 18 },
+  { d: "Tue", v: 24 },
+  { d: "Wed", v: 31 },
+  { d: "Thu", v: 27 },
+  { d: "Fri", v: 35 },
+  { d: "Sat", v: 14 },
+  { d: "Sun", v: 9 },
 ];
 
 const ATTENTION = [
@@ -51,7 +77,11 @@ const ATTENTION = [
 ];
 
 const HEALTH = [
-  "Vision review service", "Claim extraction service", "Evidence validator", "History service", "Demo engine",
+  "Vision review service",
+  "Claim extraction service",
+  "Evidence validator",
+  "History service",
+  "Demo engine",
 ];
 
 function Overview() {
@@ -73,9 +103,21 @@ function Overview() {
             <CardContent className="p-5">
               <div className="text-xs font-medium text-muted-foreground">{m.label}</div>
               <div className="mt-2 flex items-baseline gap-2">
-                <div className="text-2xl font-semibold" style={m.color ? { color: m.color } : undefined}>{m.value}</div>
-                <span className={`flex items-center text-[11px] font-medium ${m.up ? "text-success" : "text-destructive"}`} style={{ color: m.up ? "var(--success)" : "var(--destructive)" }}>
-                  {m.up ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                <div
+                  className="text-2xl font-semibold"
+                  style={m.color ? { color: m.color } : undefined}
+                >
+                  {m.value}
+                </div>
+                <span
+                  className={`flex items-center text-[11px] font-medium ${m.up ? "text-success" : "text-destructive"}`}
+                  style={{ color: m.up ? "var(--success)" : "var(--destructive)" }}
+                >
+                  {m.up ? (
+                    <ArrowUpRight className="h-3 w-3" />
+                  ) : (
+                    <ArrowDownRight className="h-3 w-3" />
+                  )}
                   {m.change}
                 </span>
               </div>
@@ -86,26 +128,35 @@ function Overview() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="shadow-soft">
-          <CardHeader><CardTitle className="text-base">Claim Decision Distribution</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-base">Claim Decision Distribution</CardTitle>
+          </CardHeader>
           <CardContent className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={PIE} dataKey="value" innerRadius={55} outerRadius={85} paddingAngle={2}>
-                  {PIE.map((p) => <Cell key={p.name} fill={p.color} />)}
+                  {PIE.map((p) => (
+                    <Cell key={p.name} fill={p.color} />
+                  ))}
                 </Pie>
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
             <div className="mt-2 flex flex-wrap justify-center gap-3 text-xs">
               {PIE.map((p) => (
-                <span key={p.name} className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />{p.name} · {p.value}%</span>
+                <span key={p.name} className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
+                  {p.name} · {p.value}%
+                </span>
               ))}
             </div>
           </CardContent>
         </Card>
 
         <Card className="shadow-soft">
-          <CardHeader><CardTitle className="text-base">Claims by Object Type</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-base">Claims by Object Type</CardTitle>
+          </CardHeader>
           <CardContent className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={BARS}>
@@ -120,7 +171,9 @@ function Overview() {
         </Card>
 
         <Card className="shadow-soft">
-          <CardHeader><CardTitle className="text-base">Claims Reviewed This Week</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-base">Claims Reviewed This Week</CardTitle>
+          </CardHeader>
           <CardContent className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={WEEK}>
@@ -128,7 +181,13 @@ function Overview() {
                 <XAxis dataKey="d" stroke="var(--muted-foreground)" fontSize={12} />
                 <YAxis stroke="var(--muted-foreground)" fontSize={12} />
                 <Tooltip />
-                <Line type="monotone" dataKey="v" stroke="var(--ai)" strokeWidth={2.5} dot={{ r: 3 }} />
+                <Line
+                  type="monotone"
+                  dataKey="v"
+                  stroke="var(--ai)"
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>
@@ -139,7 +198,11 @@ function Overview() {
         <Card className="lg:col-span-2 shadow-soft">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">Recent Claims</CardTitle>
-            <Button asChild size="sm" variant="ghost"><Link to="/claims">View all <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link></Button>
+            <Button asChild size="sm" variant="ghost">
+              <Link to="/claims">
+                View all <ArrowRight className="ml-1 h-3.5 w-3.5" />
+              </Link>
+            </Button>
           </CardHeader>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
@@ -163,11 +226,21 @@ function Overview() {
                       <td className="px-4 py-2.5">{c.userName}</td>
                       <td className="px-4 py-2.5">{OBJECT_LABEL[c.claimObject]}</td>
                       <td className="px-4 py-2.5 max-w-[200px] truncate">{c.claimTitle}</td>
-                      <td className="px-4 py-2.5"><StatusBadge status={c.result.claimStatus} /></td>
-                      <td className="px-4 py-2.5"><SeverityBadge severity={c.result.severity} /></td>
-                      <td className="px-4 py-2.5 text-xs text-muted-foreground">{formatDistanceToNow(new Date(c.submittedAt), { addSuffix: true })}</td>
+                      <td className="px-4 py-2.5">
+                        <StatusBadge status={c.result.claimStatus} />
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <SeverityBadge severity={c.result.severity} />
+                      </td>
+                      <td className="px-4 py-2.5 text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(c.submittedAt), { addSuffix: true })}
+                      </td>
                       <td className="px-4 py-2.5 text-right">
-                        <Button asChild size="sm" variant="ghost"><Link to="/claims" search={{ q: c.claimId } as never}>Open</Link></Button>
+                        <Button asChild size="sm" variant="ghost">
+                          <Link to="/claims" search={{ q: c.claimId } as never}>
+                            Open
+                          </Link>
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -179,11 +252,22 @@ function Overview() {
 
         <div className="space-y-4">
           <Card className="shadow-soft">
-            <CardHeader><CardTitle className="text-base">Review Attention</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle className="text-base">Review Attention</CardTitle>
+            </CardHeader>
             <CardContent className="space-y-2.5">
               {ATTENTION.map((a) => (
-                <div key={a.label} className="flex items-center gap-3 rounded-lg border border-border p-3">
-                  <div className="grid h-9 w-9 place-items-center rounded-lg" style={{ backgroundColor: `color-mix(in oklab, ${a.tone} 14%, transparent)`, color: a.tone }}>
+                <div
+                  key={a.label}
+                  className="flex items-center gap-3 rounded-lg border border-border p-3"
+                >
+                  <div
+                    className="grid h-9 w-9 place-items-center rounded-lg"
+                    style={{
+                      backgroundColor: `color-mix(in oklab, ${a.tone} 14%, transparent)`,
+                      color: a.tone,
+                    }}
+                  >
                     <a.icon className="h-4 w-4" />
                   </div>
                   <div className="flex-1 text-sm">{a.label}</div>
@@ -202,7 +286,10 @@ function Overview() {
               {HEALTH.map((h) => (
                 <div key={h} className="flex items-center justify-between text-sm">
                   <span>{h}</span>
-                  <span className="flex items-center gap-1.5 text-xs" style={{ color: "var(--success)" }}>
+                  <span
+                    className="flex items-center gap-1.5 text-xs"
+                    style={{ color: "var(--success)" }}
+                  >
                     <CheckCircle2 className="h-3.5 w-3.5" /> Ready
                   </span>
                 </div>
@@ -220,9 +307,18 @@ function Overview() {
 function RiskChipLegend() {
   return (
     <Card className="shadow-soft">
-      <CardHeader><CardTitle className="text-base">Active Risk Surface</CardTitle></CardHeader>
+      <CardHeader>
+        <CardTitle className="text-base">Active Risk Surface</CardTitle>
+      </CardHeader>
       <CardContent className="flex flex-wrap gap-1.5">
-        {["blurry_image", "wrong_object_part", "possible_manipulation", "user_history_risk", "text_instruction_present", "manual_review_required"].map((r) => (
+        {[
+          "blurry_image",
+          "wrong_object_part",
+          "possible_manipulation",
+          "user_history_risk",
+          "text_instruction_present",
+          "manual_review_required",
+        ].map((r) => (
           <RiskChip key={r} risk={r as never} />
         ))}
       </CardContent>

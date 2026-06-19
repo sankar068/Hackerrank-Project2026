@@ -11,7 +11,10 @@ import type { ClaimInput, ReviewResult } from "@/types/claim";
  * The UI layer must depend on this interface only.
  */
 export interface ReviewService {
-  reviewClaim(input: ClaimInput, onStage?: (stage: string, progress: number) => void): Promise<ReviewResult>;
+  reviewClaim(
+    input: ClaimInput,
+    onStage?: (stage: string, progress: number) => void,
+  ): Promise<ReviewResult>;
 }
 
 import { MockReviewService } from "./mockReviewService";

@@ -17,8 +17,10 @@ export const EVIDENCE_RULES: EvidenceRule[] = [
     object: "car",
     issueType: "Dent",
     part: "Body panel or bumper",
-    minimumEvidence: "The affected panel or bumper must be clearly visible from an angle where deformation can be inspected.",
-    goodExample: "Three-quarter angle of the bumper with visible inward deformation and reference for scale.",
+    minimumEvidence:
+      "The affected panel or bumper must be clearly visible from an angle where deformation can be inspected.",
+    goodExample:
+      "Three-quarter angle of the bumper with visible inward deformation and reference for scale.",
     insufficientExample: "Straight-on shot with heavy glare hiding the surface.",
     status: "active",
   },
@@ -27,7 +29,8 @@ export const EVIDENCE_RULES: EvidenceRule[] = [
     object: "car",
     issueType: "Scratch",
     part: "Painted surface",
-    minimumEvidence: "The claimed area must be visible with sufficient lighting and resolution to inspect surface marks.",
+    minimumEvidence:
+      "The claimed area must be visible with sufficient lighting and resolution to inspect surface marks.",
     goodExample: "Close-up showing scratch length, depth and surrounding paint.",
     insufficientExample: "Blurry photo taken at night with no scratch detail.",
     status: "active",
@@ -37,7 +40,8 @@ export const EVIDENCE_RULES: EvidenceRule[] = [
     object: "car",
     issueType: "Glass shatter",
     part: "Windshield, window or light",
-    minimumEvidence: "The damaged glass must be clearly visible and the shatter pattern must be inspectable.",
+    minimumEvidence:
+      "The damaged glass must be clearly visible and the shatter pattern must be inspectable.",
     goodExample: "Front-facing photo showing crack pattern across the glass.",
     insufficientExample: "Reflection-only image where shatter pattern is not visible.",
     status: "active",
@@ -47,7 +51,8 @@ export const EVIDENCE_RULES: EvidenceRule[] = [
     object: "car",
     issueType: "Missing part",
     part: "Mirror, badge, light or trim",
-    minimumEvidence: "The expected attachment area and surrounding vehicle structure must be visible.",
+    minimumEvidence:
+      "The expected attachment area and surrounding vehicle structure must be visible.",
     goodExample: "Photo showing the mounting point where the part should be attached.",
     insufficientExample: "Distant shot that does not show the attachment area.",
     status: "active",
@@ -77,7 +82,8 @@ export const EVIDENCE_RULES: EvidenceRule[] = [
     object: "laptop",
     issueType: "Keyboard damage",
     part: "Keyboard",
-    minimumEvidence: "The keyboard must be visible clearly enough to identify missing or damaged keys.",
+    minimumEvidence:
+      "The keyboard must be visible clearly enough to identify missing or damaged keys.",
     goodExample: "Direct overhead photo of the keyboard area.",
     insufficientExample: "Side photo where individual keys are not legible.",
     status: "active",
@@ -97,7 +103,8 @@ export const EVIDENCE_RULES: EvidenceRule[] = [
     object: "package",
     issueType: "Crushed packaging",
     part: "Box side or corner",
-    minimumEvidence: "The box or package side must be visible from an angle showing structural deformation.",
+    minimumEvidence:
+      "The box or package side must be visible from an angle showing structural deformation.",
     goodExample: "Three-quarter view showing the caved-in side or corner.",
     insufficientExample: "Top-only view that hides the deformed side.",
     status: "active",

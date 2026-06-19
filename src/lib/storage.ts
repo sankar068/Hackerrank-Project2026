@@ -16,7 +16,9 @@ export interface AuditEntry {
   status: "ok" | "warning" | "error";
 }
 
-function isBrowser() { return typeof window !== "undefined"; }
+function isBrowser() {
+  return typeof window !== "undefined";
+}
 
 export function loadClaims(): StoredClaim[] {
   if (!isBrowser()) return DEMO_CLAIMS;
@@ -39,7 +41,8 @@ export function saveClaims(claims: StoredClaim[]) {
 export function upsertClaim(claim: StoredClaim) {
   const claims = loadClaims();
   const idx = claims.findIndex((c) => c.claimId === claim.claimId);
-  if (idx >= 0) claims[idx] = claim; else claims.unshift(claim);
+  if (idx >= 0) claims[idx] = claim;
+  else claims.unshift(claim);
   saveClaims(claims);
 }
 
@@ -73,9 +76,59 @@ export function appendAudit(entry: Omit<AuditEntry, "id" | "timestamp">) {
 }
 
 const DEFAULT_AUDIT: AuditEntry[] = [
-  { id: "a1", timestamp: new Date(Date.now() - 1000 * 60 * 12).toISOString(), claimId: "CLM-10421", actor: "system", action: "AI review started", previousValue: "—", newValue: "in_progress", reason: "Reviewer triggered run", status: "ok" },
-  { id: "a2", timestamp: new Date(Date.now() - 1000 * 60 * 11).toISOString(), claimId: "CLM-10421", actor: "system", action: "Decision generated", previousValue: "in_progress", newValue: "supported", reason: "Evidence matches claim", status: "ok" },
-  { id: "a3", timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(), claimId: "CLM-10387", actor: "system", action: "Risk flag added", previousValue: "[]", newValue: "text_instruction_present", reason: "Embedded instruction in conversation", status: "warning" },
-  { id: "a4", timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(), claimId: "CLM-10374", actor: "review.admin", action: "Human review requested", previousValue: "supported", newValue: "supported (manual review)", reason: "User-history risk", status: "warning" },
-  { id: "a5", timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(), claimId: "CLM-10399", actor: "review.admin", action: "CSV exported", previousValue: "—", newValue: "output.csv", reason: "Export requested", status: "ok" },
+  {
+    id: "a1",
+    timestamp: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+    claimId: "CLM-10421",
+    actor: "system",
+    action: "AI review started",
+    previousValue: "—",
+    newValue: "in_progress",
+    reason: "Reviewer triggered run",
+    status: "ok",
+  },
+  {
+    id: "a2",
+    timestamp: new Date(Date.now() - 1000 * 60 * 11).toISOString(),
+    claimId: "CLM-10421",
+    actor: "system",
+    action: "Decision generated",
+    previousValue: "in_progress",
+    newValue: "supported",
+    reason: "Evidence matches claim",
+    status: "ok",
+  },
+  {
+    id: "a3",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+    claimId: "CLM-10387",
+    actor: "system",
+    action: "Risk flag added",
+    previousValue: "[]",
+    newValue: "text_instruction_present",
+    reason: "Embedded instruction in conversation",
+    status: "warning",
+  },
+  {
+    id: "a4",
+    timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+    claimId: "CLM-10374",
+    actor: "review.admin",
+    action: "Human review requested",
+    previousValue: "supported",
+    newValue: "supported (manual review)",
+    reason: "User-history risk",
+    status: "warning",
+  },
+  {
+    id: "a5",
+    timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+    claimId: "CLM-10399",
+    actor: "review.admin",
+    action: "CSV exported",
+    previousValue: "—",
+    newValue: "output.csv",
+    reason: "Export requested",
+    status: "ok",
+  },
 ];

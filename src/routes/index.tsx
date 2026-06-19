@@ -6,19 +6,42 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "EvidenceLens AI — Visual evidence. Explainable decisions." },
-      { name: "description", content: "EvidenceLens AI helps claim-review teams inspect visual evidence, identify risk signals and generate structured, explainable decisions." },
+      {
+        name: "description",
+        content:
+          "EvidenceLens AI helps claim-review teams inspect visual evidence, identify risk signals and generate structured, explainable decisions.",
+      },
       { property: "og:title", content: "EvidenceLens AI" },
-      { property: "og:description", content: "Multi-modal damage-claim review for insurance, logistics and warranty teams." },
+      {
+        property: "og:description",
+        content: "Multi-modal damage-claim review for insurance, logistics and warranty teams.",
+      },
     ],
   }),
   component: Welcome,
 });
 
 const FEATURES = [
-  { icon: Layers3, title: "Multi-Modal Review", desc: "Understand conversations and inspect multiple images side-by-side." },
-  { icon: ShieldCheck, title: "Evidence Validation", desc: "Check whether the correct object part is visible at the right angle." },
-  { icon: AlertTriangle, title: "Risk Detection", desc: "Flag image-quality, authenticity and user-history risks early." },
-  { icon: ScrollText, title: "Explainable Decisions", desc: "Produce short, image-grounded justifications you can audit." },
+  {
+    icon: Layers3,
+    title: "Multi-Modal Review",
+    desc: "Understand conversations and inspect multiple images side-by-side.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Evidence Validation",
+    desc: "Check whether the correct object part is visible at the right angle.",
+  },
+  {
+    icon: AlertTriangle,
+    title: "Risk Detection",
+    desc: "Flag image-quality, authenticity and user-history risks early.",
+  },
+  {
+    icon: ScrollText,
+    title: "Explainable Decisions",
+    desc: "Produce short, image-grounded justifications you can audit.",
+  },
 ];
 
 function Welcome() {
@@ -32,9 +55,16 @@ function Welcome() {
           <span className="font-semibold tracking-tight">EvidenceLens AI</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="hidden rounded-md border border-ai/40 px-2 py-1 text-[11px] font-medium sm:inline" style={{ color: "var(--ai)" }}>Demo Mode</span>
+          <span
+            className="hidden rounded-md border border-ai/40 px-2 py-1 text-[11px] font-medium sm:inline"
+            style={{ color: "var(--ai)" }}
+          >
+            Demo Mode
+          </span>
           <Button asChild size="sm">
-            <Link to="/overview">Open Console <ArrowRight className="ml-1 h-4 w-4" /></Link>
+            <Link to="/overview">
+              Open Console <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
           </Button>
         </div>
       </header>
@@ -49,12 +79,14 @@ function Welcome() {
             Review damage claims using conversation, images and evidence intelligence.
           </h1>
           <p className="mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">
-            EvidenceLens AI helps claim-review teams inspect visual evidence, understand user claims,
-            identify risk signals and generate structured, explainable decisions.
+            EvidenceLens AI helps claim-review teams inspect visual evidence, understand user
+            claims, identify risk signals and generate structured, explainable decisions.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button asChild size="lg">
-              <Link to="/new-claim">Open Review Console <ArrowRight className="ml-1.5 h-4 w-4" /></Link>
+              <Link to="/new-claim">
+                Open Review Console <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
               <Link to="/claims">View Demo Claims</Link>
@@ -80,7 +112,13 @@ function Welcome() {
             <span className="text-xs text-muted-foreground">End-to-end, fully auditable</span>
           </div>
           <ol className="grid gap-3 md:grid-cols-5">
-            {["Claim conversation", "Image evidence", "Evidence requirements", "Risk & history review", "Final decision"].map((step, i) => (
+            {[
+              "Claim conversation",
+              "Image evidence",
+              "Evidence requirements",
+              "Risk & history review",
+              "Final decision",
+            ].map((step, i) => (
               <li key={step} className="rounded-xl border border-border bg-background p-4">
                 <div className="text-xs font-medium text-primary">Step {i + 1}</div>
                 <div className="mt-1 text-sm font-medium">{step}</div>

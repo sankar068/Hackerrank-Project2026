@@ -74,9 +74,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "EvidenceLens AI" },
-      { name: "description", content: "A multi-modal evidence review application for evaluating car, laptop and package damage claims." },
+      {
+        name: "description",
+        content:
+          "A multi-modal evidence review application for evaluating car, laptop and package damage claims.",
+      },
       { property: "og:title", content: "EvidenceLens AI" },
-      { property: "og:description", content: "A multi-modal evidence review application for evaluating car, laptop and package damage claims." },
+      {
+        property: "og:description",
+        content:
+          "A multi-modal evidence review application for evaluating car, laptop and package damage claims.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

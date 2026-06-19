@@ -32,19 +32,31 @@ export const SCENARIOS: Scenario[] = [
       conversation: [
         { role: "customer", text: "My car was hit while it was parked." },
         { role: "agent", text: "Which part of the vehicle is damaged?" },
-        { role: "customer", text: "The rear bumper has a large dent on the left side. The lights appear to be fine." },
+        {
+          role: "customer",
+          text: "The rear bumper has a large dent on the left side. The lights appear to be fine.",
+        },
       ],
       images: [baseImg("Rear bumper - left side dent")],
-      history: { totalClaims: 2, accepted: 2, rejected: 0, manualReview: 0, recentClaims: 1, riskNotes: "No prior risk." },
+      history: {
+        totalClaims: 2,
+        accepted: 2,
+        rejected: 0,
+        manualReview: 0,
+        recentClaims: 1,
+        riskNotes: "No prior risk.",
+      },
     },
     result: {
       claimObject: "car",
       evidenceStandardMet: true,
-      evidenceStandardMetReason: "The rear bumper is visible from a useful angle and the deformation can be inspected.",
+      evidenceStandardMetReason:
+        "The rear bumper is visible from a useful angle and the deformation can be inspected.",
       issueType: "dent",
       objectPart: "Rear bumper",
       claimStatus: "supported",
-      claimStatusJustification: "Visible inward deformation on the left side of the rear bumper matches the user's claim.",
+      claimStatusJustification:
+        "Visible inward deformation on the left side of the rear bumper matches the user's claim.",
       supportingImageIds: [],
       validImage: true,
       severity: "medium",
@@ -65,11 +77,15 @@ export const SCENARIOS: Scenario[] = [
         { label: "Evidence sufficient for decision", passed: true },
       ],
       reasoning: {
-        claimed: "The customer reports a dent on the left side of the rear bumper after a parking incident.",
-        observed: "The image clearly shows the rear bumper with a medium inward deformation on the left side.",
-        decision: "The visible damage matches the claimed location and type, so the claim is supported.",
+        claimed:
+          "The customer reports a dent on the left side of the rear bumper after a parking incident.",
+        observed:
+          "The image clearly shows the rear bumper with a medium inward deformation on the left side.",
+        decision:
+          "The visible damage matches the claimed location and type, so the claim is supported.",
       },
-      minimumEvidenceExpected: "The affected bumper must be visible from an angle where deformation can be inspected.",
+      minimumEvidenceExpected:
+        "The affected bumper must be visible from an angle where deformation can be inspected.",
     },
   },
   {
@@ -83,12 +99,22 @@ export const SCENARIOS: Scenario[] = [
       claimObject: "laptop",
       claimTitle: "Trackpad cracked after drop",
       conversation: [
-        { role: "customer", text: "My laptop trackpad is physically cracked after I dropped my bag on it." },
+        {
+          role: "customer",
+          text: "My laptop trackpad is physically cracked after I dropped my bag on it.",
+        },
         { role: "agent", text: "Could you share a clear photo of the trackpad area?" },
         { role: "customer", text: "Sure, attaching it now." },
       ],
       images: [baseImg("Laptop trackpad - clear, no visible crack")],
-      history: { totalClaims: 1, accepted: 1, rejected: 0, manualReview: 0, recentClaims: 0, riskNotes: "No prior risk." },
+      history: {
+        totalClaims: 1,
+        accepted: 1,
+        rejected: 0,
+        manualReview: 0,
+        recentClaims: 0,
+        riskNotes: "No prior risk.",
+      },
     },
     result: {
       claimObject: "laptop",
@@ -97,7 +123,8 @@ export const SCENARIOS: Scenario[] = [
       issueType: "none",
       objectPart: "Trackpad",
       claimStatus: "contradicted",
-      claimStatusJustification: "The trackpad is clearly visible and shows no crack or physical damage.",
+      claimStatusJustification:
+        "The trackpad is clearly visible and shows no crack or physical damage.",
       supportingImageIds: [],
       validImage: true,
       severity: "none",
@@ -119,9 +146,11 @@ export const SCENARIOS: Scenario[] = [
       reasoning: {
         claimed: "The customer reports a physical crack on the laptop trackpad.",
         observed: "The trackpad surface is fully visible and appears intact with no cracks.",
-        decision: "The claimed damage is absent from a clear image of the correct part, so the claim is contradicted.",
+        decision:
+          "The claimed damage is absent from a clear image of the correct part, so the claim is contradicted.",
       },
-      minimumEvidenceExpected: "The complete trackpad surface should be visible with good lighting.",
+      minimumEvidenceExpected:
+        "The complete trackpad surface should be visible with good lighting.",
     },
   },
   {
@@ -140,16 +169,25 @@ export const SCENARIOS: Scenario[] = [
         { role: "customer", text: "Here is the package, still sealed at the time of delivery." },
       ],
       images: [baseImg("Sealed package exterior - contents not visible")],
-      history: { totalClaims: 3, accepted: 2, rejected: 0, manualReview: 1, recentClaims: 1, riskNotes: "No prior risk." },
+      history: {
+        totalClaims: 3,
+        accepted: 2,
+        rejected: 0,
+        manualReview: 1,
+        recentClaims: 1,
+        riskNotes: "No prior risk.",
+      },
     },
     result: {
       claimObject: "package",
       evidenceStandardMet: false,
-      evidenceStandardMetReason: "The internal contents area is not visible. The claim requires an opened-package photo.",
+      evidenceStandardMetReason:
+        "The internal contents area is not visible. The claim requires an opened-package photo.",
       issueType: "unknown",
       objectPart: "Contents",
       claimStatus: "not_enough_information",
-      claimStatusJustification: "The image shows only the sealed exterior. The missing-contents claim cannot be verified.",
+      claimStatusJustification:
+        "The image shows only the sealed exterior. The missing-contents claim cannot be verified.",
       supportingImageIds: [],
       validImage: true,
       severity: "unknown",
@@ -171,7 +209,8 @@ export const SCENARIOS: Scenario[] = [
       reasoning: {
         claimed: "The customer reports that items are missing from inside the package.",
         observed: "Only the sealed exterior of the package is visible in the submitted image.",
-        decision: "Without visibility into the contents, the claim cannot be supported or contradicted from the evidence.",
+        decision:
+          "Without visibility into the contents, the claim cannot be supported or contradicted from the evidence.",
       },
       minimumEvidenceExpected: "The opened package and the internal contents area must be visible.",
     },
@@ -193,7 +232,14 @@ export const SCENARIOS: Scenario[] = [
         { role: "customer", text: "Sending it now." },
       ],
       images: [baseImg("Laptop hinge - visibly separated")],
-      history: { totalClaims: 4, accepted: 3, rejected: 1, manualReview: 0, recentClaims: 2, riskNotes: "Mixed history." },
+      history: {
+        totalClaims: 4,
+        accepted: 3,
+        rejected: 1,
+        manualReview: 0,
+        recentClaims: 2,
+        riskNotes: "Mixed history.",
+      },
     },
     result: {
       claimObject: "laptop",
@@ -202,7 +248,8 @@ export const SCENARIOS: Scenario[] = [
       issueType: "broken_part",
       objectPart: "Hinge",
       claimStatus: "supported",
-      claimStatusJustification: "The hinge is visibly separated from the lid, consistent with the claim. Embedded instructions in the conversation were ignored.",
+      claimStatusJustification:
+        "The hinge is visibly separated from the lid, consistent with the claim. Embedded instructions in the conversation were ignored.",
       supportingImageIds: [],
       validImage: true,
       severity: "high",
@@ -224,9 +271,11 @@ export const SCENARIOS: Scenario[] = [
       reasoning: {
         claimed: "The customer reports a broken laptop hinge that prevents the lid from closing.",
         observed: "The hinge area shows clear separation between the lid and the base.",
-        decision: "Embedded instructions in the conversation were ignored. The visible evidence supports the claim.",
+        decision:
+          "Embedded instructions in the conversation were ignored. The visible evidence supports the claim.",
       },
-      minimumEvidenceExpected: "The hinge area and the connection between screen and base must be visible.",
+      minimumEvidenceExpected:
+        "The hinge area and the connection between screen and base must be visible.",
     },
   },
   {
@@ -245,7 +294,14 @@ export const SCENARIOS: Scenario[] = [
         { role: "customer", text: "Attached. The corner is fully caved in." },
       ],
       images: [baseImg("Package corner - clearly crushed")],
-      history: { totalClaims: 8, accepted: 3, rejected: 3, manualReview: 2, recentClaims: 4, riskNotes: "Multiple recent claims involving similar damage types." },
+      history: {
+        totalClaims: 8,
+        accepted: 3,
+        rejected: 3,
+        manualReview: 2,
+        recentClaims: 4,
+        riskNotes: "Multiple recent claims involving similar damage types.",
+      },
     },
     result: {
       claimObject: "package",
@@ -254,7 +310,8 @@ export const SCENARIOS: Scenario[] = [
       issueType: "crushed_packaging",
       objectPart: "Corner",
       claimStatus: "supported",
-      claimStatusJustification: "The package corner shows clear structural deformation matching the claim.",
+      claimStatusJustification:
+        "The package corner shows clear structural deformation matching the claim.",
       supportingImageIds: [],
       validImage: true,
       severity: "medium",
@@ -276,9 +333,11 @@ export const SCENARIOS: Scenario[] = [
       reasoning: {
         claimed: "The customer reports a heavily crushed corner on a delivered package.",
         observed: "The image shows a clearly caved-in corner of the package.",
-        decision: "Visual evidence supports the claim. User history triggers a manual review flag but does not override the evidence.",
+        decision:
+          "Visual evidence supports the claim. User history triggers a manual review flag but does not override the evidence.",
       },
-      minimumEvidenceExpected: "The package side or corner must be visible from an angle showing structural deformation.",
+      minimumEvidenceExpected:
+        "The package side or corner must be visible from an angle showing structural deformation.",
     },
   },
 ];

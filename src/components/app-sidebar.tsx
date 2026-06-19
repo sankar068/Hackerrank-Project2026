@@ -35,7 +35,9 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
         </div>
         <div className="min-w-0">
           <div className="truncate text-sm font-semibold">EvidenceLens AI</div>
-          <div className="truncate text-[11px] text-sidebar-foreground/60">Claim Review Console</div>
+          <div className="truncate text-[11px] text-sidebar-foreground/60">
+            Claim Review Console
+          </div>
         </div>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 pb-4">
@@ -62,13 +64,23 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
       <div className="border-t border-sidebar-border px-4 py-4 space-y-3">
         <div className="flex items-center justify-between text-[11px]">
-          <span className="rounded-md bg-ai/15 px-2 py-1 font-medium text-ai-foreground" style={{ backgroundColor: "color-mix(in oklab, var(--ai) 18%, transparent)", color: "white" }}>Demo Mode</span>
+          <span
+            className="rounded-md bg-ai/15 px-2 py-1 font-medium text-ai-foreground"
+            style={{
+              backgroundColor: "color-mix(in oklab, var(--ai) 18%, transparent)",
+              color: "white",
+            }}
+          >
+            Demo Mode
+          </span>
           <span className="flex items-center gap-1.5 text-success">
             <span className="h-1.5 w-1.5 rounded-full bg-success" /> Operational
           </span>
         </div>
         <div className="flex items-center gap-2.5">
-          <div className="grid h-8 w-8 place-items-center rounded-full bg-sidebar-accent text-xs font-semibold">RA</div>
+          <div className="grid h-8 w-8 place-items-center rounded-full bg-sidebar-accent text-xs font-semibold">
+            RA
+          </div>
           <div className="min-w-0 text-xs">
             <div className="truncate font-medium">Review Administrator</div>
             <div className="truncate text-sidebar-foreground/60">admin@evidencelens.ai</div>
