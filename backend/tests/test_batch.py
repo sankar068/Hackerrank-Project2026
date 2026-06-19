@@ -145,8 +145,7 @@ def test_exact_csv_headers_and_order():
     os.remove(out_name)
 
 def test_file_extension_rejected_in_supporting_ids():
-    with tempfile.NamedTemporaryFile("w", delete=False, newline='', suffix=".csv") as out_f, \\
-         tempfile.NamedTemporaryFile("w", delete=False, newline='', suffix=".csv") as in_f:
+    with tempfile.NamedTemporaryFile("w", delete=False, newline='', suffix=".csv") as out_f, tempfile.NamedTemporaryFile("w", delete=False, newline='', suffix=".csv") as in_f:
         
         writer = csv.DictWriter(in_f, fieldnames=["user_id", "image_paths", "user_claim", "claim_object"])
         writer.writeheader()
@@ -198,6 +197,7 @@ def test_provider_returns_stemmed_ids(monkeypatch):
         return Ctx()
         
     monkeypatch.setattr(urllib.request, "urlopen", mock_urlopen)
+    monkeypatch.setattr(GeminiProvider, "_image_to_part", lambda self, path: {"inlineData": {"mimeType": "image/jpeg", "data": "fake"}})
     
     os.environ["AI_API_KEY"] = "fake"
     os.environ["AI_MODEL"] = "gemini-3.5-flash"
@@ -234,6 +234,7 @@ def test_provider_returns_contradicted(monkeypatch):
         return Ctx()
         
     monkeypatch.setattr(urllib.request, "urlopen", mock_urlopen)
+    monkeypatch.setattr(GeminiProvider, "_image_to_part", lambda self, path: {"inlineData": {"mimeType": "image/jpeg", "data": "fake"}})
     
     os.environ["AI_API_KEY"] = "fake"
     os.environ["AI_MODEL"] = "gemini-3.5-flash"
@@ -269,6 +270,7 @@ def test_provider_returns_not_enough_info(monkeypatch):
         return Ctx()
         
     monkeypatch.setattr(urllib.request, "urlopen", mock_urlopen)
+    monkeypatch.setattr(GeminiProvider, "_image_to_part", lambda self, path: {"inlineData": {"mimeType": "image/jpeg", "data": "fake"}})
     
     os.environ["AI_API_KEY"] = "fake"
     os.environ["AI_MODEL"] = "gemini-3.5-flash"
@@ -285,6 +287,7 @@ def test_provider_failure_does_not_write_fake_output(monkeypatch):
         raise urllib.error.URLError("Failed")
         
     monkeypatch.setattr(urllib.request, "urlopen", mock_urlopen)
+    monkeypatch.setattr(GeminiProvider, "_image_to_part", lambda self, path: {"inlineData": {"mimeType": "image/jpeg", "data": "fake"}})
     
     os.environ["AI_API_KEY"] = "fake"
     os.environ["AI_MODEL"] = "gemini-3.5-flash"
