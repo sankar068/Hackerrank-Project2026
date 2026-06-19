@@ -28,6 +28,7 @@ class Claim(Base):
     id = Column(Integer, primary_key=True, index=True)
     public_claim_id = Column(String, unique=True, index=True, default=generate_uuid)
     user_id = Column(Integer, ForeignKey("users.id"))
+    title = Column(String, nullable=False, default="Untitled")
     
     # Official output columns mapped
     user_claim = Column(Text, nullable=False) # Exact original claim conversation

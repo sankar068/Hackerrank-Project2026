@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import engine, Base
 from app import models
-from app.api import auth
+from app.api import auth, claims, admin
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -27,7 +27,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+app.include_router(claims.router, prefix="/api/claims", tags=["claims"])
+app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
 
 @app.get("/")
 def read_root():
@@ -36,4 +38,3 @@ def read_root():
 @app.get("/api/health")
 def health_check():
     return {"status": "ok"}
-
